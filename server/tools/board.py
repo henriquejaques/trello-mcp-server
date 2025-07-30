@@ -9,6 +9,7 @@ from mcp.server.fastmcp import Context
 
 from server.models import TrelloBoard, TrelloLabel
 from server.services.board import BoardService
+from server.dtos.create_board import CreateBoardPayload
 from server.trello import client
 
 logger = logging.getLogger(__name__)
@@ -71,6 +72,28 @@ async def get_boards(ctx: Context) -> List[TrelloBoard]:
         return result
     except Exception as e:
         error_msg = f"Failed to get boards: {str(e)}"
+        logger.error(error_msg)
+        await ctx.error(error_msg)
+        raise
+
+
+async def create_board(ctx: Context, payload: CreateBoardPayload) -> TrelloBoard:
+    """Creates a new board.
+
+    Args:
+        ctx: MCP context for error reporting.
+        payload: Board creation parameters.
+
+    Returns:
+        TrelloBoard: The newly created board object.
+    """
+    try:
+        logger.info(f"Creating board: {payload.name}")
+        result = await service.create_board(payload)
+        logger.info(f"Successfully created board '{result.name}' with ID: {result.id}")
+        return result
+    except Exception as e:
+        error_msg = f"Failed to create board '{payload.name}': {str(e)}"
         logger.error(error_msg)
         await ctx.error(error_msg)
         raise
