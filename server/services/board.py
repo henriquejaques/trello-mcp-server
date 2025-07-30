@@ -42,10 +42,8 @@ class BoardService:
 
     async def get_board_labels(self, board_id: str) -> List[TrelloLabel]:
         """Retrieves all labels for a specific board.
-
         Args:
             board_id (str): The ID of the board whose labels to retrieve.
-
         Returns:
             List[TrelloLabel]: A list of label objects for the board.
         """
