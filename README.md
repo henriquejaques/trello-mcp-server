@@ -1,71 +1,90 @@
 # Trello MCP Server
 
-A powerful MCP server for interacting with Trello boards, lists, and cards via AI Hosts.
+A powerful Model Context Protocol (MCP) server that enables AI assistants to interact with Trello boards, lists, cards, and checklists through a standardized interface.
+
+> **Note**: This project is forked from [m0xai/trello-mcp-server](https://github.com/m0xai/trello-mcp-server) with additional improvements and features. Credit to the original author for the foundational work.
 
 ## Table of Contents
-- [Table of Contents](#table-of-contents)
+- [Features](#features)
 - [Prerequisites](#prerequisites)
-- [Pre-installation](#pre-installation)
 - [Installation](#installation)
 - [Server Modes](#server-modes)
 - [Configuration](#configuration)
 - [Client Integration](#client-integration)
 - [Capabilities](#capabilities)
-- [Detailed Capabilities](#detailed-capabilities)
-    - [Board Operations](#board-operations)
-    - [List Operations](#list-operations)
-    - [Card Operations](#card-operations)
-- [Usage](#usage)
+- [Usage Examples](#usage-examples)
+- [Architecture](#architecture)
+- [Development](#development)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
+- [License](#license)
+
+## Features
+
+- 🔄 **Full Trello API Coverage**: Complete CRUD operations for boards, lists, cards, and checklists
+- 🤖 **AI Assistant Integration**: Seamless integration with Claude Desktop, Cursor, and other MCP-compatible clients
+- 🚀 **Dual Mode Operation**: Support for both Claude Desktop integration and standalone SSE server
+- 🐳 **Docker Support**: Containerized deployment with Docker Compose
+- 📝 **Type Safety**: Built with Pydantic models and comprehensive type hints
+- ⚡ **Async Architecture**: Fully asynchronous for optimal performance
+- 🔧 **Easy Configuration**: Environment-based configuration with sensible defaults
 
 
 ## Prerequisites
 
-1. Python 3.12 or higher, can easly managed by `uv`
-2. [Claude for Desktop](https://claude.ai/download) installed
-3. Trello account and API credentials
-4. [uv](https://github.com/astral-sh/uv) package manager installed
-
-## Pre-installation
-1. Make sure you have installed Claude Desktop App
-2. Make sure you have already logged in with your account into Claude.
-3. Start Claude
+1. **Python 3.12+** - Easily managed with [uv](https://github.com/astral-sh/uv)
+2. **Trello Account** - With API credentials (API key and token)
+3. **AI Client** (optional) - [Claude Desktop](https://claude.ai/download), Cursor, or other MCP-compatible client
+4. **Docker** (optional) - For containerized deployment
 
 ## Installation
 
+### 1. Get Trello API Credentials
 
+1. Go to [Trello Apps Administration](https://trello.com/power-ups/admin)
+2. Create a new integration at [New Power-Up or Integration](https://trello.com/power-ups/admin/new)
+3. Fill in your information (Iframe connector URL can be left empty)
+4. Click your app's icon → "API key" from the left sidebar
+5. Copy your **API Key** and click "Token" to generate your **Trello Token**
 
-1. Set up Trello API credentials:
-   - Go to [Trello Apps Administration](https://trello.com/power-ups/admin)
-   - Create a new integration at [New Power-Up or Integration](https://trello.com/power-ups/admin/new)
-   - Fill in your information (you can leave the Iframe connector URL empty) and make sure to select the correct Workspace
-   - Click your app's icon and navigate to "API key" from left sidebar. 
-   - Copy your "API key" and on the right side: "you can manually generate a Token." click the word token to get your Trello Token.
+### 2. Clone and Setup
 
-2. Rename the `.env.example` file in the project root with `.env` and set vairables you just got:
 ```bash
-TRELLO_API_KEY=your_api_key_here
-TRELLO_TOKEN=your_token_here
-```
-
-3. Install uv if you haven't already:
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-4. Clone this repository:
-```bash
-git clone https://github.com/m0xai/trello-mcp-server.git
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/trello-mcp-server.git
 cd trello-mcp-server
+
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Copy environment template and configure
+cp .env.example .env
+# Edit .env with your credentials:
+# TRELLO_API_KEY=your_api_key_here
+# TRELLO_TOKEN=your_token_here
 ```
 
-5. Install dependencies and set server for Claude using uv::
+### 3. Choose Installation Method
+
+#### Option A: Claude Desktop Integration
 ```bash
+# Install and configure for Claude Desktop
 uv run mcp install main.py
+
+# Restart Claude Desktop app
 ```
 
-6. Restart Claude Desktop app
+#### Option B: Standalone SSE Server
+```bash
+# Set USE_CLAUDE_APP=false in .env, then run:
+python main.py
+```
+
+#### Option C: Docker Deployment
+```bash
+# Ensure .env is configured, then:
+docker-compose up -d
+```
 
 ## Server Modes
 
@@ -237,23 +256,85 @@ if __name__ == "__main__":
 - ✅ Update checkitem
 - ✅ Delete checkitem
 
-## Usage
+## Usage Examples
 
-Once installed, you can interact with your Trello boards through Claude. Here are some example queries:
+Once installed, you can interact with your Trello boards through any MCP-compatible AI client:
 
+### Basic Operations
 - "Show me all my boards"
-- "What lists are in board [board_name]?"
-- "Create a new card in list [list_name] with title [title]"
-- "Update the description of card [card_name]"
-- "Archive the list [list_name]"
+- "What lists are in the 'Project Management' board?"
+- "Create a new card called 'Review documentation' in the 'To Do' list"
+- "Update the description of the 'Website redesign' card"
+- "Move the 'Bug fixes' card to the 'In Progress' list"
+- "Archive the 'Completed Tasks' list"
 
-Here are my example usages:
+### Advanced Workflows
+- "Create a new card with a checklist for project milestones"
+- "Show me all overdue cards across my boards"
+- "Add team members to the 'Sprint Planning' card"
+- "Create a weekly report template with checklists"
 
-<img width="1277" alt="Example Usage of Trello MCP server: Asking to list all my cards in Guitar Board" src="https://github.com/user-attachments/assets/fef29dfc-04b2-4af9-92a6-f8db2320c860" />
+### Example Screenshots
 
-<img width="1274" alt="Asking to add new song card into my project songs" src="https://github.com/user-attachments/assets/2d8406ca-1dde-41c0-a035-86d5271dd78f" />
+<img width="1277" alt="Example Usage: Listing cards in Guitar Board" src="https://github.com/user-attachments/assets/fef29dfc-04b2-4af9-92a6-f8db2320c860" />
 
-<img width="1632" alt="Asking to add new card with checklist in it" src="https://github.com/user-attachments/assets/5a63f107-d135-402d-ab33-b9bf13eca751" />
+<img width="1274" alt="Adding new song card to project" src="https://github.com/user-attachments/assets/2d8406ca-1dde-41c0-a035-86d5271dd78f" />
+
+<img width="1632" alt="Creating card with checklist" src="https://github.com/user-attachments/assets/5a63f107-d135-402d-ab33-b9bf13eca751" />
+
+## Architecture
+
+This MCP server follows a clean layered architecture:
+
+```
+MCP Interface (FastMCP)
+    ↓
+Tools Layer (/server/tools/)
+    ↓
+Service Layer (/server/services/)  
+    ↓
+HTTP Client Layer (/server/utils/trello_api.py)
+    ↓
+Trello REST API
+```
+
+### Key Components
+- **TrelloClient**: Async HTTP client for Trello API communication
+- **Services**: Business logic layer (`BoardService`, `CardService`, etc.)
+- **Tools**: MCP-compatible interface with error handling
+- **Models**: Pydantic data models for type safety
+
+## Development
+
+### Local Development
+```bash
+# Install dependencies
+uv sync
+
+# Run with development logging
+uv run mcp dev main.py
+
+# Run standalone server
+python main.py
+```
+
+### Code Quality
+```bash
+# Linting
+ruff check .
+
+# Type checking  
+mypy .
+
+# Formatting
+ruff format .
+```
+
+### Testing
+```bash
+# Run tests (when implemented)
+pytest
+```
 
 ## Troubleshooting
 
@@ -267,4 +348,31 @@ If you encounter issues:
 
 ## Contributing
 
-Feel free to submit issues and enhancement requests!
+Contributions are welcome! This project is a fork of [m0xai/trello-mcp-server](https://github.com/m0xai/trello-mcp-server) with ongoing improvements.
+
+### How to Contribute
+
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Make your changes** following the existing code style
+4. **Add tests** for new functionality (when test suite is implemented)
+5. **Run quality checks**: `ruff check . && mypy .`
+6. **Commit your changes**: `git commit -m 'Add amazing feature'`
+7. **Push to the branch**: `git push origin feature/amazing-feature`
+8. **Open a Pull Request**
+
+### Development Priorities
+
+Current areas where contributions would be especially valuable:
+- **Test Suite**: Adding comprehensive test coverage
+- **Error Handling**: Improving error messages and recovery
+- **Documentation**: Expanding examples and use cases
+- **Performance**: Optimizing API call patterns
+
+## License
+
+This project maintains the same license as the original [m0xai/trello-mcp-server](https://github.com/m0xai/trello-mcp-server). Please refer to the original repository for license details.
+
+---
+
+**Acknowledgments**: Special thanks to [m0xai](https://github.com/m0xai) for creating the original Trello MCP server that serves as the foundation for this project.
