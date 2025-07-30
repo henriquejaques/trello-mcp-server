@@ -6,6 +6,7 @@ from typing import List
 
 from server.models import TrelloBoard, TrelloLabel
 from server.utils.trello_api import TrelloClient
+from server.dtos.create_board import CreateBoardPayload
 
 
 class BoardService:
@@ -49,3 +50,24 @@ class BoardService:
         """
         response = await self.client.GET(f"/boards/{board_id}/labels")
         return [TrelloLabel(**label) for label in response]
+
+    async def create_board(self, payload: CreateBoardPayload) -> TrelloBoard:
+        """Creates a new board.
+
+        Args:
+            payload: The board creation payload.
+
+        Returns:
+            TrelloBoard: The newly created board.
+        """
+        # Use exclude_unset and exclude_none for clean request payload
+        data = payload.model_dump(exclude_unset=True, exclude_none=True)
+
+        # Flatten prefs fields with 'prefs_' prefix for Trello API
+        if "prefs" in data:
+            prefs = data.pop("prefs")
+            for key, value in prefs.items():
+                data[f"prefs_{key}"] = value
+
+        response = await self.client.POST("/boards", data=data)
+        return TrelloBoard(**response)
