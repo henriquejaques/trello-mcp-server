@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from server.utils.trello_api import TrelloClient
 
@@ -39,7 +39,7 @@ class ChecklistService:
         return await self.client.GET(f"/cards/{card_id}/checklists")
 
     async def create_checklist(
-        self, card_id: str, name: str, pos: str | None = None
+        self, card_id: str, name: str, pos: Optional[str] = None
     ) -> Dict:
         """
         Create a new checklist on a card.
@@ -55,10 +55,10 @@ class ChecklistService:
         data = {"name": name}
         if pos:
             data["pos"] = pos
-        return await self.client.POST(f"/checklists", data={"idCard": card_id, **data})
+        return await self.client.POST("/checklists", data={"idCard": card_id, **data})
 
     async def update_checklist(
-        self, checklist_id: str, name: str | None = None, pos: str | None = None
+        self, checklist_id: str, name: Optional[str] = None, pos: Optional[str] = None
     ) -> Dict:
         """
         Update an existing checklist.
@@ -95,7 +95,7 @@ class ChecklistService:
         checklist_id: str,
         name: str,
         checked: bool = False,
-        pos: str | None = None,
+        pos: Optional[str] = None,
     ) -> Dict:
         """
         Add a new item to a checklist.
@@ -118,11 +118,11 @@ class ChecklistService:
 
     async def update_checkitem(
         self,
-        checklist_id: str,
+        card_id: str,
         checkitem_id: str,
-        name: str | None = None,
-        checked: bool | None = None,
-        pos: str | None = None,
+        name: Optional[str] = None,
+        checked: Optional[bool] = None,
+        pos: Optional[str] = None,
     ) -> Dict:
         """
         Update a checkitem in a checklist.
@@ -141,11 +141,11 @@ class ChecklistService:
         if name:
             data["name"] = name
         if checked is not None:
-            data["checked"] = checked
+            data["state"] = "complete" if checked else "incomplete"
         if pos:
             data["pos"] = pos
         return await self.client.PUT(
-            f"/checklists/{checklist_id}/checkItems/{checkitem_id}", data=data
+            f"/cards/{card_id}/checkItem/{checkitem_id}", data=data
         )
 
     async def delete_checkitem(self, checklist_id: str, checkitem_id: str) -> Dict:

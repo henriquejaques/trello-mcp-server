@@ -3,7 +3,7 @@ This module contains tools for managing Trello checklists.
 """
 
 import logging
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from server.services.checklist import ChecklistService
 from server.trello import client
@@ -38,7 +38,7 @@ async def get_card_checklists(card_id: str) -> List[Dict]:
     return await service.get_card_checklists(card_id)
 
 
-async def create_checklist(card_id: str, name: str, pos: str | None = None) -> Dict:
+async def create_checklist(card_id: str, name: str, pos: Optional[str] = None) -> Dict:
     """
     Create a new checklist on a card.
 
@@ -54,7 +54,7 @@ async def create_checklist(card_id: str, name: str, pos: str | None = None) -> D
 
 
 async def update_checklist(
-    checklist_id: str, name: str | None = None, pos: str | None = None
+    checklist_id: str, name: Optional[str] = None, pos: Optional[str] = None
 ) -> Dict:
     """
     Update an existing checklist.
@@ -84,7 +84,7 @@ async def delete_checklist(checklist_id: str) -> Dict:
 
 
 async def add_checkitem(
-    checklist_id: str, name: str, checked: bool = False, pos: str | None = None
+    checklist_id: str, name: str, checked: bool = False, pos: Optional[str] = None
 ) -> Dict:
     """
     Add a new item to a checklist.
@@ -102,11 +102,11 @@ async def add_checkitem(
 
 
 async def update_checkitem(
-    checklist_id: str,
+    card_id: str,
     checkitem_id: str,
-    name: str | None = None,
-    checked: bool | None = None,
-    pos: str | None = None,
+    name: Optional[str] = None,
+    checked: Optional[bool] = None,
+    pos: Optional[str] = None,
 ) -> Dict:
     """
     Update a checkitem in a checklist.
@@ -121,9 +121,7 @@ async def update_checkitem(
     Returns:
         Dict: The updated checkitem data
     """
-    return await service.update_checkitem(
-        checklist_id, checkitem_id, name, checked, pos
-    )
+    return await service.update_checkitem(card_id, checkitem_id, name, checked, pos)
 
 
 async def delete_checkitem(checklist_id: str, checkitem_id: str) -> Dict:
