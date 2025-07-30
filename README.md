@@ -222,7 +222,7 @@ if __name__ == "__main__":
 | Operation | Board | List | Card | Checklist | Checklist Item |
 |-----------|-------|------|------|-----------|----------------|
 | Read      | ✅    | ✅    | ✅   | ✅        | ✅              |
-| Write     | ❌    | ✅    | ✅   | ✅        | ✅              |
+| Write     | ✅    | ✅    | ✅   | ✅        | ✅              |
 | Update    | ❌    | ✅    | ✅   | ✅        | ✅              |
 | Delete    | ❌    | ✅    | ✅   | ✅        | ✅              |
 
@@ -231,6 +231,7 @@ if __name__ == "__main__":
 #### Board Operations
 - ✅ Read all boards
 - ✅ Read specific board details
+- ✅ Create new boards (with comprehensive parameter support)
 
 #### List Operations
 - ✅ Read all lists in a board
@@ -262,6 +263,7 @@ Once installed, you can interact with your Trello boards through any MCP-compati
 
 ### Basic Operations
 - "Show me all my boards"
+- "Create a new board called 'Q1 Project Planning'"
 - "What lists are in the 'Project Management' board?"
 - "Create a new card called 'Review documentation' in the 'To Do' list"
 - "Update the description of the 'Website redesign' card"
